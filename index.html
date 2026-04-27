@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Together we will win — a social impact initiative. Break free from addiction. Order the guide, download, and step into victory for yourself and your family.">
+  <title>Victory Radiance | Together We Win</title>
+  <!-- Preconnect & luxury fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (free icons for luxurious accents) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0A0C12;
+      color: #1E1B1A;
+      scroll-behavior: smooth;
+    }
+
+    /* HERO SECTION — three rejoicing youths in sun rays */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 100%);
+      overflow: hidden;
+    }
+
+    /* Background image: three happy youths in golden sunlight */
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      filter: brightness(1.02) contrast(1.05);
+    }
+
+    /* Warm sun ray overlay (simulated light beams) */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,215,130,0.2) 0%, rgba(255,165,50,0.05) 60%, transparent 90%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Elegant vignette + soft overlay for readability */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, rgba(10,12,18,0.2) 0%, rgba(0,0,0,0.3) 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      padding: 2rem;
+      z-index: 2;
+      backdrop-filter: blur(2px);
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 9vw, 6.8rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #FFF9F0;
+      text-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2);
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .hero h1 span {
+      display: inline-block;
+      border-bottom: 3px solid #E8BC7E;
+      padding-bottom: 0.15em;
+    }
+
+    .hero .sun-ray-accent {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 4px;
+      color: #FFE6C7;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      opacity: 0.85;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #FFE6C7;
+      font-size: 1.4rem;
+      animation: float 2s infinite;
+      cursor: pointer;
+      z-index: 3;
+      background: rgba(0,0,0,0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    @keyframes float {
+      0% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+      50% { transform: translateX(-50%) translateY(12px); opacity: 1; }
+      100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+    }
+
+    /* MAIN BOOK SECTION — luxury card */
+    .book-section {
+      background: linear-gradient(145deg, #FEF9F0 0%, #FFF7E8 100%);
+      padding: 5rem 2rem 6rem;
+      position: relative;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .book-showcase {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Book cover placeholder — can be replaced with actual image */
+    .book-cover-placeholder {
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 2.8rem;
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: pointer;
+      filter: drop-shadow(0 30px 30px rgba(0,0,0,0.15));
+    }
+
+    .book-cover-placeholder:hover {
+      transform: translateY(-8px);
+      filter: drop-shadow(0 38px 35px rgba(0,0,0,0.2));
+    }
+
+    /* Designed mock book cover (elegant, gold-bordered, using book details from image) */
+    .mock-cover {
+      background: linear-gradient(135deg, #1F2A2E 0%, #0F171B 100%);
+      border-radius: 18px;
+      padding: 2rem 1.5rem 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,245,0.1);
+      border: 1px solid rgba(232, 188, 126, 0.5);
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .gold-foil {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 1.8rem;
+      color: #E8BC7E;
+      opacity: 0.6;
+    }
+
+    .mock-cover h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #E8BC7E;
+      margin-bottom: 1.5rem;
+      border-left: 3px solid #E8BC7E;
+      padding-left: 1rem;
+      text-align: left;
+    }
+
+    .mock-cover .addiction-line {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Cormorant Garamond', serif;
+      line-height: 1.2;
+      color: #FFF1DF;
+      margin: 1.2rem 0 1rem;
+      text-transform: uppercase;
+      text-align: left;
+    }
+
+    .mock-cover .subguide {
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #D4B483;
+      margin-bottom: 1rem;
+      border-top: 1px solid rgba(232,188,126,0.3);
+      padding-top: 1rem;
+      text-align: left;
+    }
+
+    .mock-cover .verse {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #C0B28A;
+      text-align: left;
+      margin-top: 1rem;
+    }
+
+    .mock-cover hr {
+      border-color: rgba(232,188,126,0.3);
+      margin: 1rem 0;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: #E8BC7E;
+      color: #0F171B;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      letter-spacing: 1px;
+      margin-top: 0.8rem;
+    }
+
+    /* Call to action text & link */
+    .victory-message {
+      margin: 2rem 0 1.5rem;
+    }
+
+    .victory-message p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 500;
+      color: #2C2418;
+      letter-spacing: -0.3px;
+      text-shadow: 0 1px 0 rgba(255,255,240,0.8);
+    }
+
+    .amazon-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #1E2A2F;
+      padding: 1rem 2.8rem;
+      border-radius: 60px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+      color: #FFF7E8;
+      border: 1px solid #E8BC7E;
+      transition: all 0.3s ease;
+      margin: 1rem 0 0.8rem;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+    }
+
+    .amazon-link i {
+      font-size: 1.4rem;
+      color: #E8BC7E;
+    }
+
+    .amazon-link:hover {
+      background: #0F1A1E;
+      transform: scale(1.02);
+      border-color: #F5CF8E;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.12);
+      color: white;
+    }
+
+    .callout-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #4A3B2C;
+      background: rgba(232,188,126,0.18);
+      display: inline-block;
+      padding: 0.5rem 1.8rem;
+      border-radius: 100px;
+      backdrop-filter: blur(2px);
+      margin-top: 0.5rem;
+    }
+
+    .callout-text i {
+      margin-right: 8px;
+      color: #BE8C4A;
+    }
+
+    .fine-print {
+      font-size: 0.75rem;
+      color: #8F7A62;
+      margin-top: 2rem;
+      letter-spacing: 0.3px;
+    }
+
+    /* Social work footer */
+    .footer-note {
+      background: #0F1117;
+      color: #B5A889;
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(232,188,126,0.2);
+    }
+
+    .footer-note a {
+      color: #E8BC7E;
+      text-decoration: none;
+    }
+
+    @media (max-width: 760px) {
+      .book-section {
+        padding: 3rem 1.5rem;
+      }
+      .victory-message p {
+        font-size: 1.5rem;
+      }
+      .mock-cover .addiction-line {
+        font-size: 1.6rem;
+      }
+      .amazon-link {
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero: Three rejoicing youths in sun rays + slogan "Together we will win" -->
+  <section class="hero">
+    <!-- High-resolution image of three joyful young people bathed in sunlight (free royalty-free stock) -->
+    <img class="hero-bg" src="https://images.pexels.com/photos/6238090/pexels-photo-6238090.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Three happy youths celebrating in golden sun rays" crossorigin="anonymous">
+    <div class="hero-content">
+      <h1><span>Together we will win</span></h1>
+      <div class="sun-ray-accent">
+        <i class="fas fa-sun"></i>  freedom · unity · light  <i class="fas fa-sun"></i>
+      </div>
+    </div>
+    <div class="scroll-indicator" onclick="document.querySelector('.book-section').scrollIntoView({behavior:'smooth'})">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- Book & Amazon section: cover placeholder, Amazon link, victory call -->
+  <section class="book-section">
+    <div class="container book-showcase">
+      <!-- Book cover placeholder area (ready to be replaced with actual book cover image) -->
+      <div class="book-cover-placeholder" id="bookCoverPlaceholder">
+        <!-- Simulated luxury book cover design (based on the book details from the image) -->
+        <div class="mock-cover">
+          <div class="gold-foil"><i class="fas fa-crown"></i></div>
+          <h3>BREAK·FREE</h3>
+          <div class="addiction-line">
+            ADDICTION HAS <br>NO POWER OVER ME
+          </div>
+          <div class="subguide">
+            A STEP-BY-STEP GUIDE <br>FOR PERSONAL OR FAMILY DELIVERANCE
+          </div>
+          <hr>
+          <div class="verse">
+            <i class="fas fa-feather-alt"></i> Lessons drawn from real stories and based on the Bible.
+          </div>
+          <div class="cover-badge">
+            <i class="fas fa-book-open"></i> VICTORY EDITION
+          </div>
+        </div>
+        <!-- Note: This div simulates the book cover. Replace with <img src="actual-cover.jpg" alt="Book Cover"> when available -->
+      </div>
+
+      <!-- Amazon link and victory decree -->
+      <div class="victory-message">
+        <p>⚡ Order, Download, go to victory — for you & your family ⚡</p>
+      </div>
+
+      <!-- Direct Amazon link (provided by client) -->
+      <a href="https://a.co/d/0j98pcHn" class="amazon-link" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-amazon"></i> ORDER & DOWNLOAD ON AMAZON <i class="fas fa-arrow-right"></i>
+      </a>
+
+      <div class="callout-text">
+        <i class="fas fa-heart"></i> Claim your personal & family victory today <i class="fas fa-hands-helping"></i>
+      </div>
+      <div class="fine-print">
+        * Instant access — Kindle & Paperback. Your breakthrough starts here.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <p><i class="fas fa-globe"></i> Social Impact Initiative — Together we rise, together we win. <br> 
+    <span style="opacity: 0.7;">© 2025 · Empowerment for every family · Based on real testimonies & biblical truth</span></p>
+  </footer>
+
+  <!-- tiny script for smooth scroll (already inline, plus interactivity) -->
+  <script>
+    // Optional: smooth initial load if hash, and provide a hover note that cover placeholder can be replaced
+    (function() {
+      // allow anyone to replace book cover placeholder with actual image (instructional)
+      const coverContainer = document.getElementById('bookCoverPlaceholder');
+      if (coverContainer) {
+        // Add a small attribute indicating it's replaceable (designer hint)
+        coverContainer.setAttribute('data-replace-hint', 'replace .mock-cover with <img> for actual book cover');
+      }
+    })();
+  </script>
+</body>
+</html>
+```
