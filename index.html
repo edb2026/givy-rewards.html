@@ -1,0 +1,767 @@
+Вот полный код веб-приложения Givy Rewards Marketplace — доска объявлений с регистрацией, товарами, админ-панелью, рейтингом продавцов и интеграцией мессенджеров.
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Givy Rewards Marketplace | Товары и обмен</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            color: #1a2c3e;
+            padding-bottom: 70px;
+        }
+
+        /* header */
+        .app-header {
+            background: linear-gradient(135deg, #0f2b3d, #1b4f6e);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            font-weight: 300;
+            font-size: 0.9rem;
+            display: block;
+        }
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .nav-links button {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-links button:hover {
+            background: #ffb347;
+            color: #1e2f3a;
+        }
+        .user-greeting {
+            font-size: 0.85rem;
+            background: #2c6e8f;
+            padding: 5px 12px;
+            border-radius: 50px;
+        }
+
+        /* контейнер */
+        .container {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+
+        /* карточки товаров */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 28px rgba(0,0,0,0.1);
+        }
+        .product-img {
+            height: 180px;
+            background: #eef2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 1rem;
+        }
+        .product-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .price-badge {
+            display: inline-block;
+            background: #e6f4ea;
+            color: #2e7d32;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin: 8px 0;
+        }
+        .free-tag {
+            background: #ffedd5;
+            color: #b45309;
+        }
+        .seller-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            margin: 5px 0;
+            color: #f5b042;
+        }
+        .location {
+            font-size: 0.7rem;
+            color: #5f7f9c;
+        }
+
+        /* формы */
+        .form-card {
+            background: white;
+            border-radius: 32px;
+            padding: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 8px 0 16px;
+            border: 1px solid #ccdbe5;
+            border-radius: 28px;
+            font-size: 1rem;
+        }
+        button {
+            background: #1f6390;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.danger {
+            background: #c7362b;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #1f6390;
+            color: #1f6390;
+        }
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        .preview-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+        }
+
+        /* админ таблица */
+        .admin-table {
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* модалки */
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 1.8rem;
+        }
+
+        /* кнопки соцсетей */
+        .contact-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .contact-badge {
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #eef3f7;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .btn-footer {
+            background: #2c3e50;
+            padding: 8px 25px;
+        }
+        @media (max-width: 700px) {
+            .header-top { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+    // ------------------- STORAGE KEYS --------------------
+    const STORAGE = {
+        users: 'givy_users',
+        products: 'givy_products',
+        ratings: 'givy_ratings',      // seller ratings
+        messages: 'givy_messages',
+        nextIds: 'givy_next_ids'
+    };
+
+    // helpers
+    function getStorage(key, defaultValue = []) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+    }
+    function setStorage(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    // ---- init default admin & demo data ----
+    function initData() {
+        let users = getStorage(STORAGE.users, []);
+        if (users.length === 0) {
+            users = [
+                { id: 'u1', email: 'admin@givy.com', username: 'AdminGivy', password: 'admin123', role: 'admin', contactMethods: [] },
+                { id: 'u2', email: 'alice@example.com', username: 'AliceWonder', password: '123456', role: 'user', contactMethods: [{ type: 'whatsapp', value: '+79991234567' }, { type: 'telegram', value: '@alice_tg' }] },
+                { id: 'u3', email: 'bob@example.com', username: 'BobBuilder', password: '123456', role: 'user', contactMethods: [{ type: 'email', value: 'bob@example.com' }] }
+            ];
+            setStorage(STORAGE.users, users);
+        }
+
+        let products = getStorage(STORAGE.products, []);
+        if (products.length === 0) {
+            products = [
+                { id: 'p1', sellerId: 'u2', title: 'Стул офисный', description: 'Удобный стул, почти новый', price: 2500, priceType: 'paid', category: 'Мебель', locationZip: '101000', images: [], status: 'active', createdAt: Date.now() },
+                { id: 'p2', sellerId: 'u3', title: 'Книги по программированию', description: '3 книги JS, Python', price: 'free', priceType: 'free', category: 'Книги', locationZip: '105120', images: [], status: 'active', createdAt: Date.now() },
+                { id: 'p3', sellerId: 'u2', title: 'Наушники Sony', description: 'Отличное состояние', price: 3200, priceType: 'paid', category: 'Электроника', locationZip: '101000', images: [], status: 'active', createdAt: Date.now() }
+            ];
+            setStorage(STORAGE.products, products);
+        }
+
+        let ratings = getStorage(STORAGE.ratings, []);
+        if (ratings.length === 0) {
+            ratings = [
+                { id: 'r1', sellerId: 'u2', userId: 'u3', rating: 9, comment: 'Отличный продавец, быстро отвечает', createdAt: Date.now() },
+                { id: 'r2', sellerId: 'u3', userId: 'u2', rating: 10, comment: 'Все честно, рекомендую', createdAt: Date.now() }
+            ];
+            setStorage(STORAGE.ratings, ratings);
+        }
+
+        let messages = getStorage(STORAGE.messages, []);
+        setStorage(STORAGE.messages, messages);
+    }
+    initData();
+
+    // current session
+    let currentUser = null;
+
+    // helper: найти пользователя
+    function getUserById(uid) {
+        const users = getStorage(STORAGE.users);
+        return users.find(u => u.id === uid);
+    }
+
+    // получить средний рейтинг продавца
+    function getSellerAverageRating(sellerId) {
+        const ratings = getStorage(STORAGE.ratings).filter(r => r.sellerId === sellerId);
+        if (!ratings.length) return null;
+        const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+        return avg.toFixed(1);
+    }
+
+    // получить комментарии о продавце
+    function getSellerComments(sellerId) {
+        return getStorage(STORAGE.ratings).filter(r => r.sellerId === sellerId).sort((a,b)=>b.createdAt - a.createdAt);
+    }
+
+    // добавить рейтинг продавцу
+    function addRating(sellerId, userId, rating, comment) {
+        const ratings = getStorage(STORAGE.ratings);
+        const newRating = { id: Date.now() + '' + Math.random(), sellerId, userId, rating: Number(rating), comment, createdAt: Date.now() };
+        ratings.push(newRating);
+        setStorage(STORAGE.ratings, ratings);
+    }
+
+    // добавить товар
+    function addProduct(product) {
+        const products = getStorage(STORAGE.products);
+        products.push(product);
+        setStorage(STORAGE.products, products);
+    }
+
+    // обновить статус видимости
+    function updateProductVisibility(productId, hidden) {
+        let products = getStorage(STORAGE.products);
+        const index = products.findIndex(p => p.id === productId);
+        if (index !== -1) {
+            products[index].status = hidden ? 'hidden' : 'active';
+            setStorage(STORAGE.products, products);
+        }
+    }
+
+    // отправить сообщение от админа продавцу
+    function sendMessage(fromId, toId, text) {
+        const messages = getStorage(STORAGE.messages);
+        messages.push({ id: Date.now() + '_msg', fromId, toId, text, timestamp: Date.now(), read: false });
+        setStorage(STORAGE.messages, messages);
+    }
+
+    function getUserMessages(userId) {
+        return getStorage(STORAGE.messages).filter(m => m.toId === userId);
+    }
+
+    // --- рендер приложения (SPA) ---
+    let currentView = 'marketplace';
+
+    function render() {
+        if (!currentUser) {
+            renderAuthScreen();
+            return;
+        }
+        const container = document.getElementById('app');
+        let viewHtml = '';
+        // хедер
+        viewHtml = `
+            <div class="app-header">
+                <div class="header-top">
+                    <div class="logo"><h1>🎁 Givy Rewards Marketplace</h1><span>обменивайся с выгодой</span></div>
+                    <div class="user-greeting">👋 ${currentUser.username} (${currentUser.role === 'admin' ? 'Админ' : 'Покупатель/Продавец'})</div>
+                    <div class="nav-links">
+                        <button data-nav="marketplace">🏠 Товары</button>
+                        <button data-nav="addProduct">➕ Выставить товар</button>
+                        <button data-nav="profile">👤 Профиль</button>
+                        ${currentUser.role === 'admin' ? '<button data-nav="admin">🛡️ Админ-панель</button>' : ''}
+                        <button data-nav="logout">🚪 Выйти</button>
+                    </div>
+                </div>
+            </div>
+            <div class="container" id="viewContainer"></div>
+            <footer>
+                <button class="btn-footer" id="gotoRewards">🌟 Перейти на Givy Rewards</button>
+                <button class="btn-footer" id="gotoShop">🛍️ Перейти на GivyRewardsShop</button>
+            </footer>
+        `;
+        container.innerHTML = viewHtml;
+        attachNavEvents();
+        document.getElementById('gotoRewards')?.addEventListener('click', () => alert('Переход на Givy Rewards (демо)'));
+        document.getElementById('gotoShop')?.addEventListener('click', () => alert('Переход на GivyRewardsShop (демо)'));
+
+        loadView(currentView);
+    }
+
+    function attachNavEvents() {
+        document.querySelectorAll('[data-nav]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const nav = btn.getAttribute('data-nav');
+                if (nav === 'logout') { logout(); return; }
+                currentView = nav;
+                loadView(currentView);
+            });
+        });
+    }
+
+    function loadView(view) {
+        const container = document.getElementById('viewContainer');
+        if (view === 'marketplace') renderMarketplace(container);
+        else if (view === 'addProduct') renderAddProduct(container);
+        else if (view === 'profile') renderProfile(container);
+        else if (view === 'admin' && currentUser?.role === 'admin') renderAdminPanel(container);
+        else renderMarketplace(container);
+    }
+
+    // marketplace: все активные товары
+    function renderMarketplace(container) {
+        let products = getStorage(STORAGE.products).filter(p => p.status === 'active');
+        const sellersMap = new Map();
+        products.forEach(p => {
+            if (!sellersMap.has(p.sellerId)) sellersMap.set(p.sellerId, getUserById(p.sellerId));
+        });
+        let html = `<h2>📢 Все товары на маркетплейсе</h2><div class="products-grid">`;
+        if (products.length === 0) html += `<p>Пока товаров нет, станьте первым продавцом!</p>`;
+        products.forEach(product => {
+            const seller = getUserById(product.sellerId);
+            const avgRating = getSellerAverageRating(product.sellerId);
+            const priceDisplay = product.priceType === 'free' ? 'БЕСПЛАТНО' : `${product.price} ₽`;
+            const freeClass = product.priceType === 'free' ? 'free-tag' : '';
+            html += `
+                <div class="product-card" data-product-id="${product.id}">
+                    <div class="product-img">${product.images && product.images[0] ? `<img src="${product.images[0]}" alt="фото">` : '<span>📷 нет фото</span>'}</div>
+                    <div class="product-info">
+                        <div class="product-title">${escapeHtml(product.title)}</div>
+                        <div class="price-badge ${freeClass}">${priceDisplay}</div>
+                        <div class="seller-rating">⭐ Рейтинг продавца: ${avgRating ? avgRating + '/10' : 'нет оценок'}</div>
+                        <div class="location">📍 ${product.locationZip || 'не указан'}</div>
+                        <div class="contact-icons">
+                            ${renderContactMethods(seller?.contactMethods || [])}
+                        </div>
+                        <button class="detail-btn" data-id="${product.id}">Подробнее & отзывы</button>
+                        <button class="share-fb" data-title="${product.title}">🔗 Поделиться FB</button>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+
+        document.querySelectorAll('.detail-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const pid = btn.getAttribute('data-id');
+                showProductDetail(pid);
+            });
+        });
+        document.querySelectorAll('.share-fb').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const title = btn.getAttribute('data-title');
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${title}`, '_blank');
+            });
+        });
+    }
+
+    function renderContactMethods(methods) {
+        if (!methods.length) return '<span class="contact-badge">📞 Связь: не указана</span>';
+        return methods.map(m => `<span class="contact-badge">${m.type.toUpperCase()}: ${m.value}</span>`).join('');
+    }
+
+    function showProductDetail(productId) {
+        const products = getStorage(STORAGE.products);
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+        const seller = getUserById(product.sellerId);
+        const sellerRatings = getSellerComments(seller.id);
+        const avgRating = getSellerAverageRating(seller.id);
+        const modalDiv = document.createElement('div');
+        modalDiv.className = 'modal';
+        modalDiv.innerHTML = `
+            <div class="modal-content">
+                <h3>${escapeHtml(product.title)}</h3>
+                <p><strong>Описание:</strong> ${escapeHtml(product.description)}</p>
+                <p><strong>Цена:</strong> ${product.priceType === 'free' ? 'Бесплатно' : product.price + ' ₽'}</p>
+                <p><strong>Категория:</strong> ${product.category}</p>
+                <p><strong>Локация ZIP:</strong> ${product.locationZip}</p>
+                <hr>
+                <h4>👤 Продавец: ${seller.username}</h4>
+                <div><strong>Средний рейтинг:</strong> ${avgRating ? avgRating + '/10' : 'нет оценок'}</div>
+                <div><strong>Контакты:</strong> ${renderContactMethods(seller.contactMethods)}</div>
+                <h4>📝 Отзывы о продавце:</h4>
+                <div id="commentsList">${sellerRatings.map(r => `<div>⭐ ${r.rating}/10 &nbsp; ${escapeHtml(r.comment)} <small>от ${getUserById(r.userId)?.username || 'пользователь'}</small></div>`).join('') || '<i>Нет комментариев</i>'}</div>
+                <hr>
+                ${currentUser && currentUser.id !== seller.id ? `
+                <h4>Оценить продавца (1-10)</h4>
+                <input type="number" id="ratingScore" min="1" max="10" step="1" placeholder="Оценка">
+                <textarea id="ratingComment" placeholder="Ваш комментарий"></textarea>
+                <button id="submitRatingBtn">Отправить оценку</button>
+                ` : ''}
+                <button id="closeModal">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modalDiv);
+        document.getElementById('closeModal')?.addEventListener('click', () => modalDiv.remove());
+        if (currentUser && currentUser.id !== seller.id) {
+            document.getElementById('submitRatingBtn')?.addEventListener('click', () => {
+                const score = document.getElementById('ratingScore').value;
+                const comment = document.getElementById('ratingComment').value;
+                if (score && score >=1 && score <=10) {
+                    addRating(seller.id, currentUser.id, score, comment);
+                    alert('Спасибо за оценку!');
+                    modalDiv.remove();
+                    showProductDetail(productId);
+                } else alert('Введите число от 1 до 10');
+            });
+        }
+    }
+
+    function renderAddProduct(container) {
+        let imageFiles = [];
+        let imagePreviews = [];
+        const html = `
+            <div class="form-card">
+                <h2>📦 Выставить товар</h2>
+                <input type="text" id="prodTitle" placeholder="Название товара" required>
+                <textarea id="prodDesc" rows="3" placeholder="Описание (средней длины)"></textarea>
+                <select id="prodCategory"><option>Электроника</option><option>Одежда</option><option>Мебель</option><option>Книги</option><option>Другое</option></select>
+                <div><label><input type="checkbox" id="isFree"> Бесплатно</label></div>
+                <div id="priceDiv"><input type="number" id="prodPrice" placeholder="Цена в ₽"></div>
+                <input type="text" id="zipCode" placeholder="Индекс (ZIP)">
+                <button id="getLocationBtn">📍 Применить мою локацию</button>
+                <div><label>Фото (до 10)</label><input type="file" id="prodImages" accept="image/*" multiple></div>
+                <div id="imagePreviewContainer" class="image-preview"></div>
+                <button id="submitProductBtn">Опубликовать товар</button>
+            </div>
+        `;
+        container.innerHTML = html;
+        const freeCheck = document.getElementById('isFree');
+        const priceDiv = document.getElementById('priceDiv');
+        freeCheck.addEventListener('change', () => { priceDiv.style.display = freeCheck.checked ? 'none' : 'block'; });
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    try {
+                        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ru`);
+                        const data = await res.json();
+                        const zip = data.postcode || '101000';
+                        document.getElementById('zipCode').value = zip;
+                        alert(`Локация определена: почтовый индекс ${zip}`);
+                    } catch(e) { document.getElementById('zipCode').value = '101000'; alert('Демо: ZIP установлен 101000'); }
+                }, () => alert('Не удалось определить, укажите вручную'));
+            } else alert('Геолокация не поддерживается');
+        });
+
+        const fileInput = document.getElementById('prodImages');
+        fileInput.addEventListener('change', (e) => {
+            imagePreviews = [];
+            const files = Array.from(e.target.files).slice(0,10);
+            const previewDiv = document.getElementById('imagePreviewContainer');
+            previewDiv.innerHTML = '';
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.classList.add('preview-img');
+                    previewDiv.appendChild(img);
+                    imagePreviews.push(ev.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+            imageFiles = files;
+        });
+
+        document.getElementById('submitProductBtn').addEventListener('click', () => {
+            const title = document.getElementById('prodTitle').value;
+            const desc = document.getElementById('prodDesc').value;
+            const category = document.getElementById('prodCategory').value;
+            const isFree = document.getElementById('isFree').checked;
+            const priceVal = isFree ? 'free' : parseFloat(document.getElementById('prodPrice').value);
+            const zip = document.getElementById('zipCode').value;
+            if (!title || !desc) { alert('Заполните название и описание'); return; }
+            if (!isFree && (!priceVal || priceVal <= 0)) { alert('Укажите цену'); return; }
+            const product = {
+                id: 'prod_' + Date.now() + '_' + Math.random().toString(36),
+                sellerId: currentUser.id,
+                title, description: desc, price: isFree ? 'free' : priceVal, priceType: isFree ? 'free' : 'paid',
+                category, locationZip: zip || 'Не указан',
+                images: imagePreviews.slice(0,10),
+                status: 'active', createdAt: Date.now()
+            };
+            addProduct(product);
+            alert('Товар опубликован!');
+            currentView = 'marketplace';
+            render();
+        });
+    }
+
+    function renderProfile(container) {
+        const user = currentUser;
+        let ownProducts = getStorage(STORAGE.products).filter(p => p.sellerId === user.id);
+        const messages = getUserMessages(user.id);
+        let contactHtml = '';
+        user.contactMethods = user.contactMethods || [];
+        const renderContacts = () => {
+            return user.contactMethods.map(m => `<div>${m.type}: ${m.value} <button class="removeContact" data-type="${m.type}">❌</button></div>`).join('');
+        };
+        const html = `
+            <div class="form-card">
+                <h2>👤 Мой профиль</h2>
+                <p><strong>Имя:</strong> ${user.username}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <h3>📱 Мои способы связи (текст, email, WhatsApp, Telegram)</h3>
+                <div id="contactsList">${renderContacts()}</div>
+                <select id="contactTypeSelect"><option>email</option><option>whatsapp</option><option>telegram</option><option>text</option><option>custom</option></select>
+                <input id="contactValue" placeholder="Значение (телефон / юзернейм)">
+                <button id="addContactBtn">Добавить контакт</button>
+                <hr>
+                <h3>📦 Мои товары</h3>
+                <div id="myProductsList"></div>
+                <hr>
+                <h3>✉️ Сообщения от администрации</h3>
+                <div>${messages.map(m => `<div class="contact-badge">📩 от ${getUserById(m.fromId)?.username || 'админ'}: ${escapeHtml(m.text)}</div>`).join('') || 'Нет сообщений'}</div>
+            </div>
+        `;
+        container.innerHTML = html;
+        const prodContainer = document.getElementById('myProductsList');
+        if (ownProducts.length) {
+            prodContainer.innerHTML = ownProducts.map(p => `<div><strong>${p.title}</strong> - ${p.priceType === 'free' ? 'Бесплатно' : p.price + '₽'} <button class="deleteOwnProduct" data-id="${p.id}">Удалить</button></div>`).join('');
+            document.querySelectorAll('.deleteOwnProduct').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    let prods = getStorage(STORAGE.products).filter(p => p.id !== btn.getAttribute('data-id'));
+                    setStorage(STORAGE.products, prods);
+                    renderProfile(container);
+                });
+            });
+        } else prodContainer.innerHTML = '<i>Вы ещё не выставили товары</i>';
+        document.getElementById('addContactBtn')?.addEventListener('click', () => {
+            const type = document.getElementById('contactTypeSelect').value;
+            const val = document.getElementById('contactValue').value;
+            if (!val) return alert('Введите значение');
+            user.contactMethods.push({ type, value: val });
+            let users = getStorage(STORAGE.users).map(u => u.id === user.id ? user : u);
+            setStorage(STORAGE.users, users);
+            currentUser = user;
+            renderProfile(container);
+        });
+    }
+
+    // Админ панель: бесплатные товары, скрыть, написать продавцу
+    function renderAdminPanel(container) {
+        let allProducts = getStorage(STORAGE.products);
+        let freeProducts = allProducts.filter(p => p.priceType === 'free');
+        const html = `
+            <h2>🛡️ Админ-панель | Бесплатные товары</h2>
+            <div class="admin-table">
+                <table><thead><tr><th>Название</th><th>Продавец</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="freeTableBody"></tbody></table>
+            </div>
+        `;
+        container.innerHTML = html;
+        const tbody = document.getElementById('freeTableBody');
+        function renderFreeTable() {
+            const freshFree = getStorage(STORAGE.products).filter(p => p.priceType === 'free');
+            tbody.innerHTML = freshFree.map(p => {
+                const seller = getUserById(p.sellerId);
+                return `<tr>
+                    <td>${escapeHtml(p.title)}</td>
+                    <td>${seller?.username || 'unknown'}</td>
+                    <td>${p.status === 'active' ? '✅ Видим' : '❌ Скрыт'}</td>
+                    <td><button class="toggleHideBtn" data-id="${p.id}" data-hidden="${p.status === 'hidden'}">${p.status === 'active' ? 'Скрыть' : 'Показать'}</button>
+                    <button class="msgSellerBtn" data-id="${p.sellerId}" data-name="${seller?.username}">✉️ Написать продавцу</button></td>
+                </tr>`;
+            }).join('');
+            document.querySelectorAll('.toggleHideBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const prodId = btn.getAttribute('data-id');
+                    const isHidden = btn.getAttribute('data-hidden') === 'true';
+                    updateProductVisibility(prodId, !isHidden);
+                    renderFreeTable();
+                });
+            });
+            document.querySelectorAll('.msgSellerBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const sellerId = btn.getAttribute('data-id');
+                    const sellerName = btn.getAttribute('data-name');
+                    const msg = prompt(`Написать сообщение продавцу ${sellerName}:`);
+                    if (msg) {
+                        sendMessage(currentUser.id, sellerId, msg);
+                        alert('Сообщение отправлено продавцу (появится в его профиле)');
+                    }
+                });
+            });
+        }
+        renderFreeTable();
+    }
+
+    function renderAuthScreen() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="app-header" style="background:#0f2b3d"><div class="logo"><h1>🎁 Givy Rewards Marketplace</h1></div></div>
+            <div class="container">
+                <div class="form-card"><h2>Вход / Регистрация</h2>
+                <input id="loginEmail" placeholder="Email"><input id="loginPass" type="password" placeholder="Пароль"><button id="loginBtn">Войти</button>
+                <hr><h3>Регистрация</h3><input id="regName" placeholder="Имя"><input id="regEmail" placeholder="Email"><input id="regPass" type="password" placeholder="Пароль"><button id="regBtn">Зарегистрироваться</button>
+                </div>
+            </div>
+            <footer><button class="btn-footer">🌟 Перейти на Givy Rewards</button><button class="btn-footer">🛍️ Перейти на GivyRewardsShop</button></footer>
+        `;
+        document.getElementById('loginBtn')?.addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            const users = getStorage(STORAGE.users);
+            const user = users.find(u => u.email === email && u.password === pass);
+            if(user) { currentUser = user; render(); } else alert('Неверные данные');
+        });
+        document.getElementById('regBtn')?.addEventListener('click', () => {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            if(!name || !email || !pass) return alert('Заполните все поля');
+            let users = getStorage(STORAGE.users);
+            if(users.find(u=>u.email===email)) return alert('Email занят');
+            const newUser = { id: 'u'+Date.now(), email, username: name, password: pass, role: 'user', contactMethods: [] };
+            users.push(newUser);
+            setStorage(STORAGE.users, users);
+            currentUser = newUser;
+            render();
+        });
+    }
+
+    function logout() { currentUser = null; render(); }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    render();
+</script>
+</body>
+</html>
+```
